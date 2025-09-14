@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my $data_file = 'gandhinagar_data.txt';
+open my $fh, '<', $data_file or die "Cannot open '$data_file': $!";
+
+my %gandhinagar_data;
+
+# Read and parse the data file
+while (my $line = <$fh>) {
+    chomp $line;
+    next if $line =~ /^#/;
+    my ($type, $name, $description) = split /\|/, $line;
+    push @{$gandhinagar_data{$type}}, {
+        name => $name,
+        description => $description
+    };
+}
+close $fh;
+
+# Generate a report for a specific category
+sub generate_report_by_type {
+    my $type = shift;
+    print "--- Report on $type in Gandhinagar ---\n";
+    if (exists $gandhinagar_data{$type}) {
+        foreach my $item (@{$gandhinagar_data{$type}}) {
+            print "  - Name: $item->{name}\n";
+            print "    Description: $item->{description}\n";
+        }
+    } else {
+        print "No data found for type '$type'.\n";
+    }
+    print "\n";
+}
+
+# Main script logic
+generate_report_by_type("Religious Site");
+generate_report_by_type("Nature Reserve");
+
+__END__
+# Data for gandhinagar_data.txt
+# Type|Name|Description
+Religious Site|Akshardham Temple|A magnificent temple complex and a spiritual landmark.
+Nature Reserve|Indroda Nature Park|Known as India's Jurassic Park, it features dinosaur fossils and a zoo.
+Garden/Park|Sarita Udhyan|A popular picnic spot along the Sabarmati River.
